@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>kata-kata Full Cinematic 50+</title>
+<style>
+body { margin:0; padding:0; height:100vh; display:flex; justify-content:center; align-items:center; background: radial-gradient(circle at center, #1c1c1c, #111); color:#fff; font-family:'Segoe UI', sans-serif; overflow:hidden; cursor:pointer; position:relative;}
+.container{ text-align:center; z-index:2; max-width:500px;}
+h1{ font-size:3em; margin-bottom:20px; animation:pulse 4s infinite alternate;}
+p{ font-size:1.2em; line-height:1.5; min-height:60px; opacity:0; text-shadow:0 0 10px #fff; transition:opacity 0.8s ease; display:inline-block; position:relative; backdrop-filter:blur(0px);}
+.rain,.particle{ position:absolute; pointer-events:none; border-radius:50%; }
+.rain{ width:100%; height:100%; background-image:url('https://i.imgur.com/6rjYVZC.png'); background-repeat:repeat; animation: rainMove 0.5s linear infinite; opacity:0.2; z-index:1; }
+@keyframes rainMove{ 0%{background-position:0 0;} 100%{background-position:0 100%;} }
+@keyframes pulse{ 0%{text-shadow:0 0 10px #ff6b81;} 100%{text-shadow:0 0 30px #ff4757;} }
+.float{ animation:float 3s ease-in-out infinite alternate;}
+@keyframes float{ 0%{transform:translateY(0);} 100%{transform:translateY(-10px);} }
+.particle-float{ animation:particleFloat 2s ease-in-out infinite alternate; }
+@keyframes particleFloat{0%{transform:translateY(0);}100%{transform:translateY(-15px);}}
+button{ margin-top:20px; padding:10px 20px; font-size:1em; border:none; border-radius:5px; background-color:#ff4757; color:#fff; cursor:pointer; transition:background 0.3s;}
+button:hover{ background-color:#ff6b81;}
+.glow{ text-shadow:0 0 10px currentColor,0 0 20px currentColor,0 0 30px currentColor;}
+.footer{ position:absolute; bottom:10px; width:100%; text-align:center; font-size:0.9em; min-height:20px; opacity:0; transition:opacity 0.8s ease; display:inline-block; position:relative; backdrop-filter:blur(0px);}
+</style>
+</head>
+<body>
+<div class="rain"></div>
+<div class="container">
+<h1>kata-kata Cinematic </h1>
+<p id="quote">Klik layar untuk memunculkan quote galau...</p>
+<button id="autoBtn">Auto-generate quote</button>
+</div>
+<div class="footer" id="footer"></div>
+<audio autoplay loop>
+  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+</audio>
+<script>
+const quotes=[
+{ text:"Kadang, yang kita tunggu datangnya terlambat… dan yang pergi tak pernah kembali.", color:"#ff6b81" },
+{ text:"Hati ini lelah… tapi tetap berharap.", color:"#ff4757" },
+{ text:"Sendiri bukan berarti sepi, tapi kadang sepi itu berat.", color:"#3498db" },
+{ text:"Rindu yang tak tersampaikan, lebih sakit dari kehilangan.", color:"#8e44ad" },
+{ text:"Biarkan hujan membersihkan luka di hatiku.", color:"#5dade2" },
+{ text:"Hanya senyap yang mendengar curahan hatiku.", color:"#2980b9" },
+{ text:"Terkadang tersenyum itu hanya menutupi luka.", color:"#e74c3c" },
+{ text:"Menunggu yang tak pasti, itu yang paling menyakitkan.", color:"#d35400" },
+{ text:"Langit kelabu, hatiku kelabu juga.", color:"#34495e" },
+{ text:"Hanya malam yang mengerti kesepianku.", color:"#2c3e50" },
+{ text:"Cinta itu seperti angin, kadang terasa, kadang tak terlihat.", color:"#f39c12" },
+{ text:"Terkadang yang terpenting bukan dimiliki, tapi diingat.", color:"#1abc9c" },
+{ text:"Sendiri di keramaian, rasa sepi tetap hadir.", color:"#9b59b6" },
+{ text:"Kamu pergi, tapi bayanganmu tetap di hatiku.", color:"#e67e22" },
+{ text:"Jangan menunggu seseorang yang tak pernah peduli.", color:"#c0392b" },
+{ text:"Setiap hujan membawa kenangan yang tak ingin hilang.", color:"#2980b9" },
+{ text:"Tersenyumlah meski hati menjerit.", color:"#16a085" },
+{ text:"Kehilanganmu membuat aku belajar merelakan.", color:"#2ecc71" },
+{ text:"Hati yang terluka butuh waktu lebih lama untuk sembuh.", color:"#34495e" },
+{ text:"Kadang kita harus melepaskan untuk menemukan damai.", color:"#8e44ad" },
+{ text:"Sunyi bukan berarti sepi, kadang itu pilihan hati.", color:"#2980b9" },
+{ text:"Malam ini terlalu panjang tanpa hadirmu.", color:"#34495e" },
+{ text:"Rindu ini berat, tapi aku harus tersenyum.", color:"#e74c3c" },
+{ text:"Hati kecil ini menangis diam-diam.", color:"#8e44ad" },
+{ text:"Menyimpan rasa sendiri itu menyakitkan.", color:"#ff6b81" },
+{ text:"Terkadang kata tidak cukup untuk menggambarkan perasaan.", color:"#d35400" },
+{ text:"Aku lelah berpura-pura bahagia.", color:"#c0392b" },
+{ text:"Kehilanganmu meninggalkan jejak dalam hati.", color:"#3498db" },
+{ text:"Masa lalu sering menghantui setiap langkahku.", color:"#9b59b6" },
+{ text:"Hanya diam yang bisa menjelaskan semua luka.", color:"#2980b9" },
+{ text:"Aku ingin melupakan, tapi bayanganmu tetap ada.", color:"#e67e22" },
+{ text:"Kadang aku rindu hanya untuk menangis sendiri.", color:"#ff6b81" },
+{ text:"Sendiri bukan berarti kalah, tapi kadang terasa hampa.", color:"#16a085" },
+{ text:"Hati ini penuh dengan kata-kata yang tak tersampaikan.", color:"#f39c12" },
+{ text:"Senyumku menipu, hatiku hancur.", color:"#e74c3c" },
+{ text:"Rindu yang tak tersampaikan membuat malam terasa panjang.", color:"#8e44ad" },
+{ text:"Setiap perpisahan meninggalkan bekas yang dalam.", color:"#34495e" },
+{ text:"Aku belajar merelakan meski sakitnya nyata.", color:"#2ecc71" },
+{ text:"Sendiri bukanlah kelemahan, tapi ujian hati.", color:"#2980b9" },
+{ text:"Malam membawa semua kesedihan yang kubawa sendiri.", color:"#2c3e50" },
+{ text:"Kadang air mata lebih jujur dari kata-kata.", color:"#c0392b" },
+{ text:"Hati yang rapuh tetap berharap meski kecewa.", color:"#e67e22" },
+{ text:"Rindu yang tak tersampaikan membuatku hampa.", color:"#9b59b6" },
+{ text:"Aku ingin melarikan diri dari semua kenangan.", color:"#f39c12" },
+{ text:"Tersenyum adalah caraku menutupi kesedihan.", color:"#ff6b81" },
+{ text:"Malam sunyi menjadi saksi luka hatiku.", color:"#2980b9" },
+{ text:"Aku belajar diam karena kata tak ada gunanya.", color:"#34495e" },
+{ text:"Hanya sepi yang menemani setiap langkahku.", color:"#16a085" },
+{ text:"Perpisahan bukan akhir, tapi rasanya seperti mati.", color:"#8e44ad" },
+{ text:"Setiap rindu membuatku tersesat dalam kenangan.", color:"#d35400" },
+{ text:"Aku belajar merelakan, meski tak ingin.", color:"#c0392b" },
+{ text:"Hati ini lelah, tapi tetap menunggu.", color:"#ff4757" },
+{ text:"Kadang senyumku hanyalah topeng dari luka.", color:"#e74c3c" },
+{ text:"Malam ini terlalu sepi tanpa hadirmu.", color:"#2980b9" },
+{ text:"Rindu ini membuatku tak bisa tidur.", color:"#8e44ad" }
+];
+
+const quoteEl=document.getElementById("quote");
+const autoBtn=document.getElementById("autoBtn");
+const footer=document.getElementById("footer");
+const creatorName="shandi";
+let typingInterval=null; // anti-crash
+
+function typeTextWithFade(el,text,color,cb){
+  if(typingInterval) clearInterval(typingInterval);
+  el.textContent="";
+  el.style.color=color;
+  el.style.opacity=1;
+  el.classList.add("glow","float");
+  el.style.backdropFilter="blur(1px)";
+  let i=0;
+  typingInterval=setInterval(()=>{
+    if(i>=text.length){ clearInterval(typingInterval); typingInterval=null; if(cb) cb(); return; }
+    el.textContent+=text[i]; i++;
+  },30);
+}
+
+function createParticles(x,y,color){
+  for(let i=0;i<15;i++){
+    const p=document.createElement('div');
+    p.className='particle particle-float';
+    p.style.width=p.style.height=Math.random()*8+5+'px';
+    p.style.background=color;
+    p.style.left=`${x}px`; p.style.top=`${y}px`; p.style.zIndex=2;
+    const angle=Math.random()*2*Math.PI; const distance=Math.random()*100+50;
+    p.style.transition='transform 1s ease-out, opacity 1s ease-out';
+    document.body.appendChild(p);
+    setTimeout(()=>{ p.style.transform=`translate(${Math.cos(angle)*distance}px,${Math.sin(angle)*distance}px)`; p.style.opacity=0; },10);
+    setTimeout(()=>p.remove(),1100);
+  }
+}
+
+function showQuote(idx=null){
+  if(idx===null) idx=Math.floor(Math.random()*quotes.length);
+  const q=quotes[idx];
+  typeTextWithFade(quoteEl,q.text,q.color,()=>{ setTimeout(()=>typeTextWithFade(footer,`Dibuat oleh ${creatorName}`,q.color),400); });
+  createParticles(window.innerWidth/2,window.innerHeight/2,q.color);
+}
+
+document.body.addEventListener('click',(e)=>{
+  const idx=Math.floor(Math.random()*quotes.length);
+  const q=quotes[idx];
+  typeTextWithFade(quoteEl,q.text,q.color,()=>{ setTimeout(()=>typeTextWithFade(footer,`Dibuat oleh ${creatorName}`,q.color),400); });
+  createParticles(e.clientX,e.clientY,q.color);
+});
+
+autoBtn.addEventListener('click',()=>showQuote());
+</script>
+</body>
+</html>
